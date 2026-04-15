@@ -22,7 +22,7 @@ class Input(PluginInput):
     pass
 
 
-class PluginTemplate(Plugin):
+class PluginTemplate(Plugin):  # Rename me
     label = "Minimal Plugin"
     description = "A ocelescope plugin"
     version = "0.1.0"
