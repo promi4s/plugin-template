@@ -1,76 +1,93 @@
 # Ocelescope Plugin Template
 
-- This is a plugin template for the Ocelescope framework.
+Use this repository as a starting point for writing an **Ocelescope** plugin.
 
-- The plugin template is a good starting point for your own ocelescope plugin.
+An Ocelescope plugin is a **Python module packaged as a `.zip`** archive. The plugin module must expose **exactly one** plugin class (your `Plugin` subclass) from its `__init__.py` entry point. Your plugin methods are regular class methods decorated with `@plugin_method`. Their type hints define inputs and outputs in the UI.  
+See the Ocelescope plugin docs for details.
 
-- A empty plugin is located at `./src/plugin-template/plugin.py`
+## Requirements
 
-- I highly recommend also using uv as a package manager.
+- Python **3.13**
+- A Python package manager (recommended: **uv**)
 
-## First Steps
+## Project layout
 
-  1. Install dependencies with
+The actual plugin code lives in:
 
-  ```sh
-  uv sync
-  ```
+- `src/plugin-template/plugin.py` (plugin class, resources, inputs)
+- `src/plugin-template/__init__.py` (exports your plugin class)
 
-  or using the requirment.txt
+When you build the plugin, Ocelescope creates one or more `.zip` files in `dist/`.
 
-  ```sh
-  pip install -r requirements.txt
-  ```
+## Quick start
 
-  1. Rename the Template plugin
+1. Install dependencies.
 
-  Rename the name of the class and also the label and description
+   With **uv**:
 
-  ```python "src/plugin-template/plugin.py"
-  
-  class PluginTemplate(Plugin):  # Rename me
-    label = "Minimal Plugin" # Change Me
-    description = "A ocelescope plugin" #Change Me
-    version = "0.1.0"
+   ```sh
+   uv sync
+   ```
 
-    ...
+   With **pip**:
 
-  ```
+   ```sh
+   pip install -r requirements.txt
+   ```
 
-  Don't forget to also change the import in the `__init__.py`
+2. Open `src/plugin-template/plugin.py` and rename the plugin class and metadata.
 
-  ```python "src/plugin-template/plugin.py"
-  
-  from .plugin import PluginTemplate #Change Me
+   ```py
+   class PluginTemplate(Plugin):
+       label = "Minimal Plugin"
+       description = "An Ocelescope plugin"
+       version = "0.1.0"
+   ```
 
-  __all__ = ["PluginTemplate"] #Change Me
-  ```
-  
-## Building
+3. Update the export in `src/plugin-template/__init__.py`.
 
-You can either zip the src folder yourself
+   ```py
+   from .plugin import PluginTemplate
 
-```sh
-plugin.zip/
-└──plugin-template/
-    ├── __init__.py  # Entry point
-    ├── plugin.py
-```
+   __all__ = [
+       "PluginTemplate",
+   ]
+   ```
 
-or using the ocelescope command
+## Build
+
+You can build the plugin `.zip` using the Ocelescope CLI:
 
 ```sh
 ocelescope build
 ```
 
-or if you are using uv
+If you use **uv**:
 
 ```sh
 uv run ocelescope build
 ```
 
-## Using the github workflow
+The resulting `.zip` files are written to `dist/`.
 
-by pushing tags you can also use the github workflow
+## GitHub Actions release workflow
 
-... how to trigger workflow
+This repository includes a workflow that:
+
+- builds the plugin ZIPs, and
+- creates a GitHub Release with the ZIPs attached.
+
+It runs when you push a tag that starts with `v`.
+
+Example:
+
+```sh
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+## Notes and common pitfalls
+
+- **Export exactly one plugin class.** Ocelescope expects a single plugin class exposed via `__init__.py`.
+- **Use relative imports inside the plugin.** Avoid absolute imports within your plugin package.
+- **Resources must be JSON-serializable.** Keep fields to standard JSON types (or Pydantic models).
